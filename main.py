@@ -4,7 +4,7 @@ print 'Welcome!'
 spy_name = raw_input("Please Enter Your Name:")
 
 #Validation on Name
-if spy_name > 3:
+if len(spy_name) > 0:
     spy_salute = raw_input("What should I call you Mr. or Mrs.? :")
 
     #Validation on Salutation
