@@ -20,7 +20,7 @@ if spy_name > 3:
         spy_age = raw_input("What is your age:")
 
         # Age Validations
-        if spy_age >= '16' and spy_age <= '50' :
+        if spy_age >= '12' and spy_age <= '50' :
             print 'Great!' + ' ' + spy_salute + spy_name + ' ' + 'You look perfectly eligible to become a SpyChat user.'
 
             # input Ratings
