@@ -45,12 +45,19 @@ if len(spy_name) > 0:
 
             else:
                 print 'It seems you have entered a wrong rating please try again.'
+            #Rating Validations End
 
         else:
             print 'I am Sorry !' + ' ' + spy_salute + spy_name + ' ' + 'You seems to be not eligible to become a SpyChat User.'
+        # Age Validation Ends
+
+    elif spy_salute == 'Mr' or spy_salute == 'Mrs' or spy_salute == 'mr' or spy_salute == 'mrs' :
+        print 'Please enter dot(.) after salutation'
 
     else:
         print ' Please enter a valid salutation from given options ! '
+    #Salutation Validation Ends
 
 else:
     print 'Please enter a valid name with atleast 3 characters'
+#Name validation Ends
