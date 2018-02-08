@@ -1,6 +1,27 @@
 import spydetail
 print 'Welcome to SpyChat'
 
+#Menu
+def menu() :
+    spy_choice = input("Welcome to Spy chat\n What tasks you want to do ? \n 1.Add a Frnd\n 2.Send Message \n 3. Status Update\n 4. Log Out")
+    return spy_choice
+
+def task(choice) :
+    if choice == 1:
+        # Add a Friend
+        print 'Friend has been added'
+    elif choice == 2:
+        # Send a Message
+        print 'Message has been sent'
+    elif choice == 3:
+        # Status Update
+        print 'Status has been set'
+    elif choice == 4:
+        return 4
+    else:
+        print 'Maybe you have entered an invalid choice please try again'
+        return 0
+
 #signup function
 def signup():
     print 'Sign Up'
@@ -85,14 +106,22 @@ def login():
 while True :
     spy_op = 0
     success = 0
+    choice = 0
+    #Asking to Log in or Sign up
     spy_op =  input('Please Log In or Sign Up to Continue \n 1. Log In \n 2. Sign Up\n 3.Exit \n')
     if spy_op == 1:
         success = login()
         if success == 1:
-            break
+            while True :
+                choice = menu()
+                choice = task(choice)
+                if choice == 4 :
+                    break
     elif spy_op == 2:
         signup()
     elif spy_op == 3:
+        print 'Thanx for using Spychat '
         break
     else:
         print 'You Have Entered a wrong choice try again!'
+
