@@ -1,11 +1,53 @@
 import spydetail
 print 'Welcome to SpyChat'
 
+global count_friend
+count_friend = 0
+spy_friend_name = []
+spy_friend_age = []
+spy_friend_rating = []
+spy_friend_online = []
+friend_count = [0]
+
+def selection_validation(validation):
+    validation_asci = ord(validation)
+    if (validation_asci >= 32 and validation_asci <= 47) or (validation_asci >= 58 and validation_asci <= 126 ) :
+        print "Wrong input try again."
+        return 0
+    else :
+        return 1
+
+#Selecting friend
+def select_friend():
+    k = 0
+    i = 1
+    success = 0
+    while k < friend_count[0]:
+        print i
+        print "Friend Name : " + spy_friend_name[k]
+        print "Friend Age : " + spy_friend_age[k]
+        print "Friend Rating : " + spy_friend_rating[k]
+        k = k + 1
+        i = i + 1
+    friend_num = raw_input("Which friend you want to chat with ? ")
+    success = selection_validation(friend_num)
+
+    #Validation of friend's selection
+    if success == 0 :
+        select_friend()
+    else :
+        friend_num_int = int(friend_num)
+        if friend_num_int > friend_count[0] :
+            print "Your selection is exceeding the number of friends. Try Again. "
+            select_friend()
+        else :
+            print "message has been sent."
+
 #Adding a Friend
 def add_friend():
     i = 0
     j = 1
-
+    count = 0
     friend_name = raw_input("Please Enter your friend's name :")
     # Validation on Name
     if len(friend_name) > 0:
@@ -13,7 +55,7 @@ def add_friend():
 
         # Validation on Salutation
         if friend_salut == 'Mr.' or friend_salut == 'Mrs.' or friend_salut == 'mr.' or friend_salut == 'mrs.':
-            # declaration of New variables
+            # Declaration of New variables
             friend_age = 0
             friend_rating = 0.0
 
@@ -30,15 +72,18 @@ def add_friend():
                     # Successful Registration and Printing Entered Informations
                     print 'Great! your friend has been added successfully'
                     friend_name = friend_salut + friend_name
-                    spydetail.spy_friend['friend_name'] = friend_name
-                    spydetail.spy_friend['friend_age'] = friend_age
-                    spydetail.spy_friend['friend_rating'] = friend_rating
+                    spy_friend_name.append(friend_name)
+                    spy_friend_age.append(friend_age)
+                    spy_friend_rating.append(friend_rating)
+                    friend_count[0] = friend_count[0] + 1
+                    count = friend_count[0]
                     print 'Here are the Informations provided by you as below:'
-                    #printing friend
-                    for friend in spydetail.spy_friend.items():
-                        print str(j) + " " + friend[0] + ": " + str(friend[1])
-                        i = i + 1
-                        j = j + 1
+
+                    #Printing Friend
+                    print "Name : " + friend_name
+                    print "Age : " + str(friend_age)
+                    print "Rating: " + str(friend_rating)
+                    print 'Total Number of friends you have : ' + str(count)
                     return
                 else:
                     print 'It seems you have entered a wrong rating please try again.'
@@ -76,8 +121,14 @@ def status():
             print str(j) + ' ' + i
             j = j + 1
         stat_choice = input() - 1
-        spydetail.spy_user['spy_status'] = spydetail.custom_stat[stat_choice]
-        return 1
+
+        if stat_choice >= 0 and stat_choice < j - 1 :
+            spydetail.spy_user['spy_status'] = spydetail.custom_stat[stat_choice]
+            return 1
+        else :
+            print 'You have entered a wrong choice'
+            success = status()
+            return success
 
     #Setting new status
     elif stat_op == 2:
@@ -104,7 +155,8 @@ def task(choice) :
 
     elif choice == 2:
         # Send a Message
-        print 'Message has been sent'
+        select_friend()
+        menu()
 
     elif choice == 3:
         # Status Update
@@ -113,7 +165,7 @@ def task(choice) :
             print 'Status has been set'
             print 'Your current status has been set to : ' + spydetail.spy_user['spy_status']
             menu()
-        else :
+        elif success == 0 :
             print 'There was some error in updating your status please try again !'
             menu()
 
@@ -170,8 +222,7 @@ def signup():
                     print 'Name :' + ' ' + spy_salute + spy_name
                     print 'Age :' + ' ' + str(spy_age)
                     print 'Rating :' + ' ' + str(spy_rating)
-                    login()
-
+                    return 1
                 else:
                     print 'It seems you have entered a wrong rating please try again.'
                 #Rating Validations End
@@ -198,29 +249,34 @@ def login():
     spy_password = raw_input("Please enter your password:")
     if spy_name == spydetail.spy_user['spy_name'] and spy_password == spydetail.spy_user['spy_password'] :
         print 'You are Authenticated'
-        return 1
+        menu()
     else :
         print 'Your Provided Informations are not found in our database please sign Up.'
         return 0
 
 #Introduction
 while True :
-    spy_op = 0
     success = 0
     #Asking fro being a default user or new
-    spy_op =  input('Are You an Existing User or New User? \n 1. Existing User  \n 2. New User\n 3.Exit \n')
-    if spy_op == 1:
-        print 'We have your information stored.'
-        success = login()
-        if success == 1:
-            while True :
-                menu()
-                break
-    elif spy_op == 2:
-        signup()
-    elif spy_op == 3:
-        print 'Thanx for using Spychat '
-        break
-    else:
-        print 'You Have Entered a wrong choice try again!'
+    spy_op =  raw_input('Are You an Existing User or New User? \n 1. Existing User  \n 2. New User\n 3.Exit \n')
+    success = selection_validation(spy_op)
+    if success == 0:
+        print 'wrong selection try again'
+    else :
+        if spy_op == 1:
+            print 'We have your information stored.'
+            success = login()
+            if success == 1 :
+                while True :
+                    menu()
+                    break
+        elif spy_op == 2:
+            success = signup()
+            if success == 1 :
+                login()
+        elif spy_op == 3:
+            print 'Thanx for using Spychat '
+            break
+        else:
+            print 'You Have Entered a wrong choice try again!'
 
