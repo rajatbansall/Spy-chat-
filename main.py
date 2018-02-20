@@ -1,4 +1,7 @@
 import spydetail
+from steganography.steganography import Steganography
+from datetime import datetime
+
 print 'Welcome to SpyChat'
 
 global count_friend
@@ -9,6 +12,47 @@ spy_friend_rating = []
 spy_friend_online = []
 friend_count = [0]
 
+def read_chat(friend_num) :
+    selected_friend = int(friend_num) - 1
+    print'Chats Done by you with ' + spy_friend_name[selected_friend]
+    for chats in spydetail.spy_user['chats'] :
+        if chats['friend_id'] == friend_num :
+            print chats['message']
+            print chats['time']
+            print chats['sent_by_me']
+            print '\n'
+
+def read_msg(friend_num):
+    #Reading a Message
+    friend_choosen = int(friend_num)
+    image_name = raw_input("Enter the name of the image :")
+    message = Steganography.decode(image_name)
+    new_chat = {
+        'friend_id' : friend_num,
+        'message': message,
+        'time': datetime.now(),
+        'sent_by_me': False
+    }
+    spydetail.spy_user['chats'].append(new_chat)
+    print 'Your secret text is : ' + message
+
+def send_msg(friend_num):
+    # Sending Message
+    friend_choosen = int(friend_num)
+    message = raw_input("Enter the message you want to send : ")
+    original_image = raw_input("What is the name of your image : ")
+    output_path = "output.jpg"
+    Steganography.encode(original_image, output_path, message)
+    chat = {
+        'friend_id' : friend_num,
+        'message' : message,
+        'time' : datetime.now(),
+        'sent_by_me' : True
+    }
+    spydetail.spy_user['chats'].append(chat)
+    print 'Message has been encrypted and sent'
+
+#validation function
 def selection_validation(validation):
     validation_asci = ord(validation)
     if (validation_asci >= 32 and validation_asci <= 47) or (validation_asci >= 58 and validation_asci <= 126 ) :
@@ -29,7 +73,7 @@ def select_friend():
         print "Friend Rating : " + spy_friend_rating[k]
         k = k + 1
         i = i + 1
-    friend_num = raw_input("Which friend you want to chat with ? ")
+    friend_num = raw_input("Which friend you want to communicate with ? ")
     success = selection_validation(friend_num)
 
     #Validation of friend's selection
@@ -41,7 +85,7 @@ def select_friend():
             print "Your selection is exceeding the number of friends. Try Again. "
             select_friend()
         else :
-            print "message has been sent."
+            return friend_num
 
 #Adding a Friend
 def add_friend():
@@ -141,7 +185,7 @@ def status():
 
 #Menu
 def menu() :
-    spy_choice = input("Welcome to Spy chat\n What tasks you want to do ? \n 1.Add a Frnd\n 2.Send Message \n 3. Status Update\n 4. Log Out")
+    spy_choice = input("Welcome to Spy chat\n What tasks you want to do ? \n 1.Add a Frnd\n 2.Send a Secret Message\n 3.Read a Secret Message \n 4 Status Update\n 5. Read Chat From a User \n 6. Log Out \n")
     success = task(spy_choice)
     if success == 0 :
         return
@@ -155,10 +199,16 @@ def task(choice) :
 
     elif choice == 2:
         # Send a Message
-        select_friend()
+        num = select_friend()
+        send_msg(num)
         menu()
 
     elif choice == 3:
+        #Read a Message
+        num = select_friend()
+        read_msg(num)
+
+    elif choice == 4:
         # Status Update
         success = status()
         if success == 1 :
@@ -169,8 +219,17 @@ def task(choice) :
             print 'There was some error in updating your status please try again !'
             menu()
 
-    elif choice == 4:
+    elif choice == 5:
+        # Read Chats
+        num = select_friend()
+        read_chat(num)
+        menu()
+
+
+    elif choice == 6:
+        #Logout
         return 0
+
     else:
         print 'Maybe you have entered an invalid choice please try again'
         menu()
@@ -263,18 +322,18 @@ while True :
     if success == 0:
         print 'wrong selection try again'
     else :
-        if spy_op == 1:
+        if spy_op == '1':
             print 'We have your information stored.'
             success = login()
             if success == 1 :
                 while True :
                     menu()
                     break
-        elif spy_op == 2:
+        elif spy_op == '2':
             success = signup()
             if success == 1 :
                 login()
-        elif spy_op == 3:
+        elif spy_op == '3':
             print 'Thanx for using Spychat '
             break
         else:
