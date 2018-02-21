@@ -20,7 +20,7 @@ def read_chat(friend_num) :
         if chats['friend_id'] == friend_num :
             print Fore.BLACK + str(chats['message'])
             print Fore.BLUE  + str(chats['time'])
-            print Fore.BLACK + chats['sent_by_me']
+            print Fore.BLACK + str(chats['sent_by_me'])
             print '\n'
 
 def read_msg(friend_num):
