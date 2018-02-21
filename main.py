@@ -18,9 +18,9 @@ def read_chat(friend_num) :
     print'Chats Done by you with ' + Fore.RED + spy_friend_name[selected_friend]
     for chats in spydetail.spy_user['chats'] :
         if chats['friend_id'] == friend_num :
-            print Fore.BLACK + chats['message']
-            print Fore.BLUE + chats['time']
-            print chats['sent_by_me']
+            print Fore.BLACK + str(chats['message'])
+            print Fore.BLUE  + str(chats['time'])
+            print Fore.BLACK + chats['sent_by_me']
             print '\n'
 
 def read_msg(friend_num):
