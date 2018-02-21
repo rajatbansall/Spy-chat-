@@ -1,6 +1,7 @@
 import spydetail
 from steganography.steganography import Steganography
 from datetime import datetime
+from colorama import Fore, Back, Style
 
 print 'Welcome to SpyChat'
 
@@ -14,11 +15,11 @@ friend_count = [0]
 
 def read_chat(friend_num) :
     selected_friend = int(friend_num) - 1
-    print'Chats Done by you with ' + spy_friend_name[selected_friend]
+    print'Chats Done by you with ' + Fore.RED + spy_friend_name[selected_friend]
     for chats in spydetail.spy_user['chats'] :
         if chats['friend_id'] == friend_num :
-            print chats['message']
-            print chats['time']
+            print Fore.BLACK + chats['message']
+            print Fore.BLUE + chats['time']
             print chats['sent_by_me']
             print '\n'
 
@@ -35,6 +36,8 @@ def read_msg(friend_num):
     }
     spydetail.spy_user['chats'].append(new_chat)
     print 'Your secret text is : ' + message
+    if message== 'SAVE ME' or message == 'SOS' or message =='HELP ME!':
+        print 'Spy Need your Help ' + spydetail.spy_user['spy_name']
 
 def send_msg(friend_num):
     # Sending Message
