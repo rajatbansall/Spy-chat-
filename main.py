@@ -2,6 +2,9 @@ import spydetail
 from steganography.steganography import Steganography
 from datetime import datetime
 from colorama import Fore, Back, Style
+import csv
+from user import user
+import pandas as pd
 
 print 'Welcome to SpyChat'
 
@@ -153,47 +156,49 @@ def add_friend():
 
 
 #Status Update
-def status():
+def status(logged_in_user,id_counter):
     j = 1
-
+    l = 0
     #Displaying Current Status
-    print 'your current status is : ' +  spydetail.spy_user['spy_status']
+    print 'your current status is : ' +  logged_in_user[4]
+    with open('spy.csv','a') as spy:
+        writer = csv.writer(spy)
+        stat_op = input("Do you want to choose Custom Stat or create new ? /n 1.Custom Status 2.Create New\n")
 
-    stat_op = input("Do you want to choose old status or create new ? /n 1.Old Status 2.Create New\n")
+        #Printing and asking the custom status that user want to set
+        if stat_op == 1:
+            print 'Please select a Status from the given list :\n'
+            for  i in spydetail.custom_stat :
+                print str(j) + ' ' + i
+                j = j + 1
+            stat_choice = input() - 1
 
-    #Printing and asking the custom status that user want to set
-    if stat_op == 1:
-        print 'Please select a Status from the given list :\n'
-        for  i in spydetail.custom_stat :
-            print str(j) + ' ' + i
-            j = j + 1
-        stat_choice = input() - 1
+            #Updating Custom Status
+            if stat_choice >= 0 and stat_choice < j - 1 :
+                logged_in_user[4] = spydetail.custom_stat[stat_choice]
+                return 1
+            else :
+                print 'You have entered a wrong choice'
+                success = status(logged_in_user,id_counter)
+                return success
 
-        if stat_choice >= 0 and stat_choice < j - 1 :
-            spydetail.spy_user['spy_status'] = spydetail.custom_stat[stat_choice]
+        #Setting new status
+        elif stat_op == 2:
+            new_status = raw_input('Please Enter your new status :')
+            logged_in_user[4] = new_status
+            writer.writecolumn(logged_in_user)
             return 1
         else :
-            print 'You have entered a wrong choice'
-            success = status()
-            return success
-
-    #Setting new status
-    elif stat_op == 2:
-        new_status = raw_input('Please Enter your new status :')
-        spydetail.custom_stat.append((new_status))
-        spydetail.spy_user['spy_status'] = new_status
-        return 1
-    else :
-        return 0
+            return 0
 
 #Menu
-def menu() :
+def menu(logged_in_user, id_counter) :
     spy_choice = input("Welcome to Spy chat\n What tasks you want to do ? \n 1.Add a Frnd\n 2.Send a Secret Message\n 3.Read a Secret Message \n 4 Status Update\n 5. Read Chat From a User \n 6. Log Out \n")
-    success = task(spy_choice)
+    success = task(spy_choice, logged_in_user, id_counter)
     if success == 0 :
         return
 
-def task(choice) :
+def task(choice, logged_in_user, id_counter) :
     success = 0
     if choice == 1:
         # Add a Friend
@@ -213,14 +218,14 @@ def task(choice) :
 
     elif choice == 4:
         # Status Update
-        success = status()
+        success = status(logged_in_user, id_counter)
         if success == 1 :
             print 'Status has been set'
-            print 'Your current status has been set to : ' + spydetail.spy_user['spy_status']
-            menu()
+            print 'Your current status has been set to : ' + logged_in_user[4]
+            menu(logged_in_user,id_counter)
         elif success == 0 :
             print 'There was some error in updating your status please try again !'
-            menu()
+            menu(logged_in_user)
 
     elif choice == 5:
         # Read Chats
@@ -279,11 +284,13 @@ def signup():
                         print 'It seems you need more experience.'
 
                     # Successful Registration and Printing Entered Informations
-                    print 'Great!' + ' ' + spy_salute + spy_name + ' ' + 'You have successfully registered to SpyChat.'
+                    spy = user(spy_name, spy_password, spy_age, spy_rating)
+                    print 'Great!' + ' ' + spy_salute + spy.name  + ' ' + 'You have successfully registered to SpyChat.'
                     print 'Here are the Informations provided by you as below:'
-                    print 'Name :' + ' ' + spy_salute + spy_name
-                    print 'Age :' + ' ' + str(spy_age)
-                    print 'Rating :' + ' ' + str(spy_rating)
+                    print 'Name :' + ' ' + spy_salute + spy.name
+                    print 'Age :' + ' ' + str(spy.age)
+                    print 'Rating :' + ' ' + str(spy.rating)
+
                     return 1
                 else:
                     print 'It seems you have entered a wrong rating please try again.'
@@ -306,15 +313,25 @@ def signup():
 
 #Login Function
 def login():
+    found = False
+    id_counter = 0
     print 'Log In'
-    spy_name = raw_input("Please enter your Name:")
-    spy_password = raw_input("Please enter your password:")
-    if spy_name == spydetail.spy_user['spy_name'] and spy_password == spydetail.spy_user['spy_password'] :
-        print 'You are Authenticated'
-        menu()
-    else :
-        print 'Your Provided Informations are not found in our database please sign Up.'
-        return 0
+    with open('spy.csv', 'rb') as spy_user:
+        reader = csv.reader(spy_user)
+        spy_name = raw_input("Please enter your Name:")
+        spy_password = raw_input("Please enter your password:")
+        for row in reader:
+            id_counter = id_counter + 1
+            if spy_name == row[0] and spy_password == row[1] :
+                found = True
+                logged_in_user = row
+                break
+        if found == True:
+            print 'You are Authenticated'
+            menu(logged_in_user, id_counter)
+        else :
+            print 'Your Provided Informations are not found in our database please sign Up.'
+            return 0
 
 #Introduction
 while True :
